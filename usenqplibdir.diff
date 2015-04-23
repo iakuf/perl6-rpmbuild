@@ -1,0 +1,33 @@
+diff -rupN tools/build/install-moar-runner.pl tools1/build/install-moar-runner.pl
+--- tools/build/install-moar-runner.pl	2015-03-20 06:32:24.000000000 +0800
++++ tools1/build/install-moar-runner.pl	2015-04-23 16:09:40.258103184 +0800
+@@ -6,15 +6,14 @@ use warnings;
+ use 5.008;
+ use File::Spec;
+ 
+-my ($destdir, $prefix) = @ARGV;
++my ($destdir, $prefix, $lib_dir) = @ARGV;
+ my $realpath = $destdir.$prefix;
+ 
+ unless (File::Spec->file_name_is_absolute($prefix)) {
+     $prefix = File::Spec->rel2abs($prefix);
+ }
+ 
+-my $lib_dir = File::Spec->catfile($prefix, 'languages', 'nqp', 'lib');
+-my $nqp_mvm = File::Spec->catfile($prefix, 'languages', 'nqp', 'lib', 'nqp.moarvm');
++my $nqp_mvm = File::Spec->catfile($lib_dir, 'nqp.moarvm');
+ 
+ if ($^O eq 'MSWin32') {
+     my $install_to = File::Spec->catfile($realpath, 'bin', 'nqp-m.bat');
+diff -rupN tools/build/Makefile-Moar.in tools1/build/Makefile-Moar.in
+--- tools/build/Makefile-Moar.in	2015-03-20 06:32:24.000000000 +0800
++++ tools1/build/Makefile-Moar.in	2015-04-23 16:08:41.898103235 +0800
+@@ -89,7 +89,7 @@ m-install: m-all
+ 	$(CP) $(NQP_MOAR) $(DESTDIR)$(NQP_LIB_DIR)
+ 	$(CP) $(P5QREGEX_MOAR) $(DESTDIR)$(NQP_LIB_DIR)
+ 	$(CP) src/vm/moar/profiler/template.html $(DESTDIR)$(NQP_LIB_DIR)/profiler/template.html
+-	$(PERL) tools/build/install-moar-runner.pl "$(DESTDIR)" $(PREFIX)
++	$(PERL) tools/build/install-moar-runner.pl "$(DESTDIR)" $(PREFIX) $(NQP_LIB_DIR)
+ 
+ # FIXME:
+ M_CLEANUPS = *.moarvm  gen/moar/* $(M_RUNNER)
